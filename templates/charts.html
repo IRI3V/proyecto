@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Gráficos de Ventas</h2>
+{% if graph_image %}
+    <div class="text-center">
+        <img src="{{ url_for('static', filename=graph_image) }}" class="img-fluid" alt="Gráfico de Ventas Diarias">
+    </div>
+{% else %}
+    <p>No hay datos suficientes para generar gráficos.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registrar Ventas</h2>
+
+<div class="row">
+    <!-- Agregar Productos al Carrito -->
+    <div class="col-md-6">
+        <h4>Agregar Productos al Carrito</h4>
+        <form method="POST" class="row g-3">
+            <div class="col-md-8">
+                <label for="producto_id" class="form-label">Producto</label>
+                <select name="producto_id" id="producto_id" class="form-select" required>
+                    <option value="" disabled selected>Selecciona un producto</option>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}">{{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="cantidad" class="form-label">Cantidad</label>
+                <input type="number" name="cantidad" id="cantidad" class="form-control" min="1" value="1" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary mt-2">Añadir al Carrito</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Carrito de Compras -->
+    <div class="col-md-6">
+        <h4>Carrito de Compras</h4>
+        {% if cart %}
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td>{{ item.nombre }}</td>
+                            <td>${{ "%.2f"|format(item.precio) }}</td>
+                            <td>{{ item.cantidad }}</td>
+                            <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                            <td>
+                                <a href="{{ url_for('remove_from_cart', producto_id=item.producto_id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-end">Total:</th>
+                        <th colspan="2">${{ "%.2f"|format(total) }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <form action="{{ url_for('finalizar_venta') }}" method="POST">
+                <button type="submit" class="btn btn-success">Finalizar Venta</button>
+            </form>
+        {% else %}
+            <p>El carrito está vacío.</p>
+        {% endif %}
+    </div>
+</div>
+<hr>
+<h3>Ventas Recientes</h3>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID Venta</th>
+            <th>Total</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for venta in ventas_recientes %}
+            <tr>
+                <td>{{ venta.id }}</td>
+                <td>${{ "%.2f"|format(venta.total) }}</td>
+                <td>{{ venta.fecha.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
